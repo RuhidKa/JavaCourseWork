@@ -11,7 +11,6 @@ public class Main {
     public static void main(String args[])
             throws IOException, InterruptedException, SQLException {
         DataBase db = new DataBase();
-        db.connect();
         db.dropTable();
         db.createNewTable();
         ConsoleUI console = new ConsoleUI();

@@ -8,7 +8,26 @@ import java.sql.Statement;
 
 public class DataBase {
 
-  Connection conn = null;
+  private static final String URL = "jdbc:postgresql://localhost:5432/database";
+  private static final String USERNAME = "postgres";
+  private static final String PASSWORD = "postgre";
+
+  private static Connection conn = null;
+
+  static {
+    try {
+      Class.forName("org.postgresql.Driver");
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+      System.out.println("Connection to SQLite has been established.");
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
   public void pushRecords(Double CPUUsage, Double MEMUsage, double DISKUsage) {
     String sql = "INSERT INTO usage(cpu,mem,disk) VALUES(?,?,?)";
@@ -34,7 +53,7 @@ public class DataBase {
 
   public void createNewTable() {
     String sql = "CREATE TABLE IF NOT EXISTS usage (\n" +
-        "	id integer PRIMARY KEY,\n" +
+        "	id SERIAL PRIMARY KEY,\n" +
         "	cpu real,\n" +
         "	mem real,\n" +
         "	disk real\n" +
@@ -42,17 +61,6 @@ public class DataBase {
 
     try (Statement stmt = conn.createStatement()) {
       stmt.execute(sql);
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
-  public void connect() {
-    try {
-      String url = "jdbc:sqlite:database.db";
-      conn = DriverManager.getConnection(url);
-
-      System.out.println("Connection to SQLite has been established.");
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
